@@ -1,5 +1,20 @@
+import TOKEN from './config.js';
+
 const global = {
   currentPage: window.location.pathname
+};
+
+const displayPopularMovies = async () => {
+  const { results } = await fetchAPIData('movie/popular');
+  console.log(results);
+};
+
+const options = {
+  method: 'GET',
+  headers: {
+    accept: 'application/json',
+    Authorization: `bearer ${TOKEN}`
+  }
 };
 
 const highlightActiveLink = () => {
@@ -11,12 +26,20 @@ const highlightActiveLink = () => {
   });
 };
 
+const fetchAPIData = async (endpoint) => {
+  const API_URL = 'https://api.themoviedb.org/3/';
+
+  const response = await fetch(`${API_URL}${endpoint}?language=en-UK`, options);
+  const data = response.json();
+  return data;
+};
+
 // Init App
 const init = () => {
   switch (global.currentPage) {
     case '/':
     case '/index.html':
-      console.log('Home');
+      displayPopularMovies();
       break;
     case '/shows.html':
       console.log('tv-shows');
