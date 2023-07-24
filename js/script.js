@@ -5,8 +5,42 @@ const global = {
 };
 
 const displayPopularMovies = async () => {
-  const { results } = await fetchAPIData('movie/popular');
-  console.log(results);
+  const { results } = await fetchAPIData('/movie/popular');
+
+  results.forEach((element) => {
+    const div = document.createElement('div');
+    div.classList.add('card');
+
+    div.innerHTML = `
+    
+    <a href="movie-details.html?id=${element.id}">
+      ${
+        element.poster_path
+          ? `<img
+             src="https://image.tmdb.org/t/p/w500${element.poster_path}"
+             class="card-img-top"
+             alt=${element.title}
+           />`
+          : `
+          <img
+          src="images/no-image.jpg"
+          class="card-img-top"
+          alt=${element.title}
+          />
+          `
+      } 
+    </a>
+    <div class="card-body">
+      <h5 class="card-title">${element.title}</h5>
+      <p class="card-text">
+        <small class="text-muted">Release: ${element.release_date}</small>
+      </p>
+    </div>
+ 
+    `;
+    document.querySelector('#popular-movies').appendChild(div);
+  });
+
 };
 
 const options = {
