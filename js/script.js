@@ -189,9 +189,13 @@ const displayTVShowDetails = async () => {
     <div class="details-bottom">
       <h2>Show Info</h2>
       <ul>
-            <li><span class="text-secondary">Number Of Episodes:</span> ${show.number_of_episodes}</li>
+            <li><span class="text-secondary">Number Of Episodes:</span> ${
+              show.number_of_episodes
+            }</li>
             <li>
-              <span class="text-secondary">Last Episode To Air:</span> ${show.last_episode_to_air.name}
+              <span class="text-secondary">Last Episode To Air:</span> ${
+                show.last_episode_to_air.name
+              }
             </li>
             <li><span class="text-secondary">Status:</span> ${show.status}</li>
           </ul>
@@ -262,11 +266,56 @@ const displayMovieBackground = (type, backdropPath) => {
   }
 };
 
+const displaySlider = async () => {
+  const { results } = await fetchAPIData('movie/now_playing');
+  console.log(results);
+
+  results.forEach((movie) => {
+    const div = document.createElement('div');
+    div.classList.add('swiper-slide');
+    div.innerHTML = `
+      <a href="movie-details.html?id=${movie.id}">
+        <img src="https://image.tmdb.org/t/p/w500${movie.poster_path}" alt="${movie.title}" />
+      </a>
+      <h4 class="swiper-rating">
+        <i class="fas fa-star text-secondary"></i> ${movie.vote_average} / 10
+      </h4>
+    `;
+    document.querySelector('.swiper-wrapper').appendChild(div);
+    initSwiper();
+  });
+};
+
+const initSwiper = () => {
+  const swiper = new Swiper('.swiper', {
+    sliderPerView: 1,
+    spaceBetween: 30,
+    freeMode: true,
+    loop: true,
+    autoplay: {
+      delay: 4000,
+      disableOnInteraction: false
+    },
+    breakpoints: {
+      500: {
+        slidesPerView: 2
+      },
+      768: {
+        slidesPerView: 3
+      },
+      1024: {
+        slidesPerView: 4
+      }
+    }
+  });
+};
+
 // Init App
 const init = () => {
   switch (global.currentPage) {
     case '/':
     case '/index.html':
+      displaySlider();
       displayPopularMovies();
       break;
     case '/shows.html':
