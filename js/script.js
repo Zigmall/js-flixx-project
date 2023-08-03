@@ -40,7 +40,6 @@ const displayPopularMovies = async () => {
     `;
     document.querySelector('#popular-movies').appendChild(div);
   });
-
 };
 
 const options = {
@@ -62,10 +61,18 @@ const highlightActiveLink = () => {
 
 const fetchAPIData = async (endpoint) => {
   const API_URL = 'https://api.themoviedb.org/3/';
-
+  showSpinner();
   const response = await fetch(`${API_URL}${endpoint}?language=en-UK`, options);
   const data = response.json();
+  hideSpinner();
   return data;
+};
+
+const showSpinner = () => {
+  document.querySelector('.spinner').classList.add('show');
+};
+const hideSpinner = () => {
+  document.querySelector('.spinner').classList.remove('show');
 };
 
 // Init App
