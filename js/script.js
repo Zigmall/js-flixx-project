@@ -1,7 +1,14 @@
 import TOKEN from './config.js';
 
 const global = {
-  currentPage: window.location.pathname
+  currentPage: window.location.pathname,
+  search: {
+    term: '',
+    type: '',
+    page: 1,
+    totalPages: 1
+  },
+  API_URL: 'https://api.themoviedb.org/3/'
 };
 
 const displayPopularMovies = async () => {
@@ -226,9 +233,19 @@ const highlightActiveLink = () => {
 };
 
 const fetchAPIData = async (endpoint) => {
-  const API_URL = 'https://api.themoviedb.org/3/';
   showSpinner();
-  const response = await fetch(`${API_URL}${endpoint}?language=en-UK`, options);
+  const response = await fetch(`${global.API_URL}${endpoint}?language=en-UK`, options);
+  const data = response.json();
+  hideSpinner();
+  return data;
+};
+
+const searchAPIData = async () => {
+  showSpinner();
+  const response = await fetch(
+    `${global.API_URL}search/${global.search.type}?language=en-UK&query=${global.search.term}`,
+    options
+  );
   const data = response.json();
   hideSpinner();
   return data;
@@ -268,7 +285,6 @@ const displayMovieBackground = (type, backdropPath) => {
 
 const displaySlider = async () => {
   const { results } = await fetchAPIData('movie/now_playing');
-  console.log(results);
 
   results.forEach((movie) => {
     const div = document.createElement('div');
@@ -310,6 +326,32 @@ const initSwiper = () => {
   });
 };
 
+// Search Movies/TV Shows
+const search = async (query) => {
+  const queryString = window.location.search;
+  const urlParams = new URLSearchParams(queryString);
+  global.search.type = urlParams.get('type');
+  global.search.term = urlParams.get('search-term');
+
+  if (global.search.term !== '' && global.search.term !== null) {
+    //todo make request
+    const results = await searchAPIData();
+    console.log(results);
+  } else {
+    showAlert('Please enter a search term');
+  }
+};
+
+const showAlert = (message, className) => {
+  const alertElement = document.createElement('div');
+  alertElement.classList.add('alert', className);
+  alertElement.appendChild(document.createTextNode(message));
+  document.querySelector('#alert').appendChild(alertElement);
+  setTimeout(() => {
+    alertElement.remove();
+  }, 3000);
+};
+
 // Init App
 const init = () => {
   switch (global.currentPage) {
@@ -328,7 +370,7 @@ const init = () => {
       displayTVShowDetails();
       break;
     case '/search.html':
-      console.log('search');
+      search();
       break;
 
     default:
