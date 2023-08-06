@@ -430,7 +430,7 @@ const displayPagination = () => {
     document.querySelector('#next').disabled = true;
   }
 
-  // Add event listeners to buttons 
+  // Add event listeners to buttons
   document.querySelector('#next').addEventListener('click', async () => {
     global.search.page++;
     const { results } = await searchAPIData();
